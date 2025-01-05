@@ -7,8 +7,9 @@ import { Plus, Trash2 } from "lucide-react";
 interface Book {
   id: string;
   title: string;
-  author: string;
-  isbn: string;
+  class: string;
+  program: string;
+  subject: string;
   quantity: number;
   lastUpdated: string;
 }
@@ -17,13 +18,14 @@ const Index = () => {
   const [books, setBooks] = useState<Book[]>([]);
   const [newBook, setNewBook] = useState({
     title: "",
-    author: "",
-    isbn: "",
+    class: "",
+    program: "",
+    subject: "",
     quantity: 0,
   });
 
   const addBook = () => {
-    if (!newBook.title || !newBook.author || !newBook.isbn) return;
+    if (!newBook.title || !newBook.class || !newBook.program || !newBook.subject) return;
     
     const book: Book = {
       id: Math.random().toString(36).substr(2, 9),
@@ -32,7 +34,7 @@ const Index = () => {
     };
 
     setBooks([...books, book]);
-    setNewBook({ title: "", author: "", isbn: "", quantity: 0 });
+    setNewBook({ title: "", class: "", program: "", subject: "", quantity: 0 });
   };
 
   const deleteBook = (id: string) => {
@@ -56,14 +58,19 @@ const Index = () => {
                 onChange={(e) => setNewBook({ ...newBook, title: e.target.value })}
               />
               <Input
-                placeholder="Author"
-                value={newBook.author}
-                onChange={(e) => setNewBook({ ...newBook, author: e.target.value })}
+                placeholder="Class"
+                value={newBook.class}
+                onChange={(e) => setNewBook({ ...newBook, class: e.target.value })}
               />
               <Input
-                placeholder="ISBN"
-                value={newBook.isbn}
-                onChange={(e) => setNewBook({ ...newBook, isbn: e.target.value })}
+                placeholder="Program"
+                value={newBook.program}
+                onChange={(e) => setNewBook({ ...newBook, program: e.target.value })}
+              />
+              <Input
+                placeholder="Subject"
+                value={newBook.subject}
+                onChange={(e) => setNewBook({ ...newBook, subject: e.target.value })}
               />
               <Input
                 type="number"
@@ -90,8 +97,9 @@ const Index = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Title</TableHead>
-                  <TableHead>Author</TableHead>
-                  <TableHead>ISBN</TableHead>
+                  <TableHead>Class</TableHead>
+                  <TableHead>Program</TableHead>
+                  <TableHead>Subject</TableHead>
                   <TableHead>Quantity</TableHead>
                   <TableHead>Last Updated</TableHead>
                   <TableHead>Actions</TableHead>
@@ -101,8 +109,9 @@ const Index = () => {
                 {books.map((book) => (
                   <TableRow key={book.id}>
                     <TableCell>{book.title}</TableCell>
-                    <TableCell>{book.author}</TableCell>
-                    <TableCell>{book.isbn}</TableCell>
+                    <TableCell>{book.class}</TableCell>
+                    <TableCell>{book.program}</TableCell>
+                    <TableCell>{book.subject}</TableCell>
                     <TableCell>{book.quantity}</TableCell>
                     <TableCell>{book.lastUpdated}</TableCell>
                     <TableCell>
