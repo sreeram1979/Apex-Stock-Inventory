@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Trash2 } from "lucide-react";
 
 interface Book {
@@ -28,6 +28,14 @@ const Index = () => {
   const classes = Array.from({ length: 10 }, (_, i) => `${i + 1}st Grade`);
   const programs = ["Aspirants", "Scholars", "Champions", "Jr Olympiads"];
   const subjects = ["Maths", "Physics", "Chemistry", "Biology", "Science", "English", "Reasoning", "GK"];
+
+  // Auto-generate title when class, program, or subject changes
+  useEffect(() => {
+    if (newBook.class && newBook.program && newBook.subject) {
+      const generatedTitle = `${newBook.class}-${newBook.program}-${newBook.subject}`;
+      setNewBook(prev => ({ ...prev, title: generatedTitle }));
+    }
+  }, [newBook.class, newBook.program, newBook.subject]);
 
   const addBook = () => {
     if (!newBook.title || !newBook.class || !newBook.program || !newBook.subject) return;
@@ -60,7 +68,8 @@ const Index = () => {
               <Input
                 placeholder="Book Title"
                 value={newBook.title}
-                onChange={(e) => setNewBook({ ...newBook, title: e.target.value })}
+                readOnly
+                className="bg-gray-100"
               />
               <Select
                 value={newBook.class}
