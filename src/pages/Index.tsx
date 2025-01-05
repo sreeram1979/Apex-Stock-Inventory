@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 
@@ -23,6 +24,10 @@ const Index = () => {
     subject: "",
     quantity: 0,
   });
+
+  const classes = Array.from({ length: 10 }, (_, i) => `${i + 1}st Grade`);
+  const programs = ["Aspirants", "Scholars", "Champions", "Jr Olympiads"];
+  const subjects = ["Maths", "Physics", "Chemistry", "Biology", "Science", "English", "Reasoning", "GK"];
 
   const addBook = () => {
     if (!newBook.title || !newBook.class || !newBook.program || !newBook.subject) return;
@@ -57,21 +62,51 @@ const Index = () => {
                 value={newBook.title}
                 onChange={(e) => setNewBook({ ...newBook, title: e.target.value })}
               />
-              <Input
-                placeholder="Class"
+              <Select
                 value={newBook.class}
-                onChange={(e) => setNewBook({ ...newBook, class: e.target.value })}
-              />
-              <Input
-                placeholder="Program"
+                onValueChange={(value) => setNewBook({ ...newBook, class: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Class" />
+                </SelectTrigger>
+                <SelectContent>
+                  {classes.map((grade) => (
+                    <SelectItem key={grade} value={grade}>
+                      {grade}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select
                 value={newBook.program}
-                onChange={(e) => setNewBook({ ...newBook, program: e.target.value })}
-              />
-              <Input
-                placeholder="Subject"
+                onValueChange={(value) => setNewBook({ ...newBook, program: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Program" />
+                </SelectTrigger>
+                <SelectContent>
+                  {programs.map((program) => (
+                    <SelectItem key={program} value={program}>
+                      {program}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select
                 value={newBook.subject}
-                onChange={(e) => setNewBook({ ...newBook, subject: e.target.value })}
-              />
+                onValueChange={(value) => setNewBook({ ...newBook, subject: value })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Subject" />
+                </SelectTrigger>
+                <SelectContent>
+                  {subjects.map((subject) => (
+                    <SelectItem key={subject} value={subject}>
+                      {subject}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <Input
                 type="number"
                 placeholder="Quantity"
