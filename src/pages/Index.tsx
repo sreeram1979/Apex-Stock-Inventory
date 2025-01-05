@@ -13,6 +13,9 @@ interface Book {
   subject: string;
   quantity: number;
   lastUpdated: string;
+  purchasedFrom: string;
+  receivedBy: string;
+  inwardDate: string;
 }
 
 const Index = () => {
@@ -23,6 +26,9 @@ const Index = () => {
     program: "",
     subject: "",
     quantity: 0,
+    purchasedFrom: "",
+    receivedBy: "",
+    inwardDate: new Date().toISOString().split('T')[0],
   });
 
   const classes = Array.from({ length: 10 }, (_, i) => `${i + 1}st Grade`);
@@ -38,16 +44,26 @@ const Index = () => {
   }, [newBook.class, newBook.program, newBook.subject]);
 
   const addBook = () => {
-    if (!newBook.title || !newBook.class || !newBook.program || !newBook.subject) return;
+    if (!newBook.title || !newBook.class || !newBook.program || !newBook.subject || !newBook.purchasedFrom || !newBook.receivedBy) return;
     
     const book: Book = {
       id: Math.random().toString(36).substr(2, 9),
       ...newBook,
       lastUpdated: new Date().toLocaleDateString(),
+      inwardDate: newBook.inwardDate,
     };
 
     setBooks([...books, book]);
-    setNewBook({ title: "", class: "", program: "", subject: "", quantity: 0 });
+    setNewBook({
+      title: "",
+      class: "",
+      program: "",
+      subject: "",
+      quantity: 0,
+      purchasedFrom: "",
+      receivedBy: "",
+      inwardDate: new Date().toISOString().split('T')[0],
+    });
   };
 
   const deleteBook = (id: string) => {
@@ -61,10 +77,10 @@ const Index = () => {
         
         <Card>
           <CardHeader>
-            <CardTitle>Add New Book</CardTitle>
+            <CardTitle>Stock Inward</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <Input
                 placeholder="Book Title"
                 value={newBook.title}
@@ -122,11 +138,26 @@ const Index = () => {
                 value={newBook.quantity}
                 onChange={(e) => setNewBook({ ...newBook, quantity: parseInt(e.target.value) || 0 })}
               />
+              <Input
+                type="date"
+                value={newBook.inwardDate}
+                onChange={(e) => setNewBook({ ...newBook, inwardDate: e.target.value })}
+              />
+              <Input
+                placeholder="Purchased From"
+                value={newBook.purchasedFrom}
+                onChange={(e) => setNewBook({ ...newBook, purchasedFrom: e.target.value })}
+              />
+              <Input
+                placeholder="Received By"
+                value={newBook.receivedBy}
+                onChange={(e) => setNewBook({ ...newBook, receivedBy: e.target.value })}
+              />
               <button
                 onClick={addBook}
-                className="flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+                className="flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 md:col-span-4"
               >
-                <Plus className="h-4 w-4" /> Add Book
+                <Plus className="h-4 w-4" /> Add Stock
               </button>
             </div>
           </CardContent>
@@ -145,6 +176,9 @@ const Index = () => {
                   <TableHead>Program</TableHead>
                   <TableHead>Subject</TableHead>
                   <TableHead>Quantity</TableHead>
+                  <TableHead>Inward Date</TableHead>
+                  <TableHead>Purchased From</TableHead>
+                  <TableHead>Received By</TableHead>
                   <TableHead>Last Updated</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
@@ -157,6 +191,9 @@ const Index = () => {
                     <TableCell>{book.program}</TableCell>
                     <TableCell>{book.subject}</TableCell>
                     <TableCell>{book.quantity}</TableCell>
+                    <TableCell>{book.inwardDate}</TableCell>
+                    <TableCell>{book.purchasedFrom}</TableCell>
+                    <TableCell>{book.receivedBy}</TableCell>
                     <TableCell>{book.lastUpdated}</TableCell>
                     <TableCell>
                       <button
