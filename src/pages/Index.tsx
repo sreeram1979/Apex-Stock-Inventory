@@ -4,7 +4,12 @@ import { StockTable } from "@/components/StockTable";
 import { Book, NewBookFormData } from "@/types/book";
 
 const Index = () => {
-  const [books, setBooks] = useState<Book[]>([]);
+  const [books, setBooks] = useState<Book[]>(() => {
+    // Initialize books from localStorage if available
+    const savedBooks = localStorage.getItem('stockBooks');
+    return savedBooks ? JSON.parse(savedBooks) : [];
+  });
+
   const [newBook, setNewBook] = useState<NewBookFormData>({
     title: "",
     class: "",
@@ -22,6 +27,11 @@ const Index = () => {
     lrNumber: "",
     autoCharges: 0,
   });
+
+  // Save to localStorage whenever books change
+  useEffect(() => {
+    localStorage.setItem('stockBooks', JSON.stringify(books));
+  }, [books]);
 
   const classes = Array.from({ length: 10 }, (_, i) => `${i + 1}st Grade`);
   const programs = ["Aspirants", "Scholars", "Champions", "Jr Olympiads"];
