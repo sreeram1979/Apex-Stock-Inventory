@@ -11,9 +11,13 @@ const Index = () => {
     program: "",
     subject: "",
     quantity: 0,
+    type: "inward",
     purchasedFrom: "",
+    sentTo: "",
     receivedBy: "",
+    sentBy: "",
     inwardDate: new Date().toISOString().split('T')[0],
+    outwardDate: "",
     transportType: "",
     lrNumber: "",
     autoCharges: 0,
@@ -31,7 +35,12 @@ const Index = () => {
   }, [newBook.class, newBook.program, newBook.subject]);
 
   const addBook = () => {
-    if (!newBook.title || !newBook.class || !newBook.program || !newBook.subject || !newBook.purchasedFrom || !newBook.receivedBy) return;
+    const requiredFields = newBook.type === 'inward' 
+      ? ['title', 'class', 'program', 'subject', 'purchasedFrom', 'receivedBy']
+      : ['title', 'class', 'program', 'subject', 'sentTo', 'sentBy'];
+
+    const hasEmptyRequiredFields = requiredFields.some(field => !newBook[field as keyof NewBookFormData]);
+    if (hasEmptyRequiredFields) return;
     
     const book: Book = {
       id: Math.random().toString(36).substr(2, 9),
@@ -46,9 +55,13 @@ const Index = () => {
       program: "",
       subject: "",
       quantity: 0,
+      type: "inward",
       purchasedFrom: "",
+      sentTo: "",
       receivedBy: "",
+      sentBy: "",
       inwardDate: new Date().toISOString().split('T')[0],
+      outwardDate: "",
       transportType: "",
       lrNumber: "",
       autoCharges: 0,

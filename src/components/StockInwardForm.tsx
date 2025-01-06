@@ -3,6 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { NewBookFormData } from "@/types/book";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface StockInwardFormProps {
   newBook: NewBookFormData;
@@ -21,12 +22,33 @@ export const StockInwardForm = ({
   programs,
   subjects,
 }: StockInwardFormProps) => {
+  const handleTypeChange = (type: 'inward' | 'outward') => {
+    setNewBook({ 
+      ...newBook, 
+      type,
+      // Reset related fields when switching types
+      purchasedFrom: '',
+      sentTo: '',
+      receivedBy: '',
+      sentBy: '',
+      inwardDate: type === 'inward' ? new Date().toISOString().split('T')[0] : '',
+      outwardDate: type === 'outward' ? new Date().toISOString().split('T')[0] : ''
+    });
+  };
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Stock Inward</CardTitle>
+        <CardTitle>Stock Movement</CardTitle>
       </CardHeader>
       <CardContent>
+        <Tabs defaultValue="inward" className="mb-4" onValueChange={(value) => handleTypeChange(value as 'inward' | 'outward')}>
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="inward">Stock Inward</TabsTrigger>
+            <TabsTrigger value="outward">Stock Outward</TabsTrigger>
+          </TabsList>
+        </Tabs>
+
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Input
             placeholder="Book Title"
@@ -85,21 +107,43 @@ export const StockInwardForm = ({
             value={newBook.quantity}
             onChange={(e) => setNewBook({ ...newBook, quantity: parseInt(e.target.value) || 0 })}
           />
-          <Input
-            type="date"
-            value={newBook.inwardDate}
-            onChange={(e) => setNewBook({ ...newBook, inwardDate: e.target.value })}
-          />
-          <Input
-            placeholder="Purchased From"
-            value={newBook.purchasedFrom}
-            onChange={(e) => setNewBook({ ...newBook, purchasedFrom: e.target.value })}
-          />
-          <Input
-            placeholder="Received By"
-            value={newBook.receivedBy}
-            onChange={(e) => setNewBook({ ...newBook, receivedBy: e.target.value })}
-          />
+          {newBook.type === 'inward' ? (
+            <>
+              <Input
+                type="date"
+                value={newBook.inwardDate}
+                onChange={(e) => setNewBook({ ...newBook, inwardDate: e.target.value })}
+              />
+              <Input
+                placeholder="Purchased From"
+                value={newBook.purchasedFrom}
+                onChange={(e) => setNewBook({ ...newBook, purchasedFrom: e.target.value })}
+              />
+              <Input
+                placeholder="Received By"
+                value={newBook.receivedBy}
+                onChange={(e) => setNewBook({ ...newBook, receivedBy: e.target.value })}
+              />
+            </>
+          ) : (
+            <>
+              <Input
+                type="date"
+                value={newBook.outwardDate}
+                onChange={(e) => setNewBook({ ...newBook, outwardDate: e.target.value })}
+              />
+              <Input
+                placeholder="Sent To"
+                value={newBook.sentTo}
+                onChange={(e) => setNewBook({ ...newBook, sentTo: e.target.value })}
+              />
+              <Input
+                placeholder="Sent By"
+                value={newBook.sentBy}
+                onChange={(e) => setNewBook({ ...newBook, sentBy: e.target.value })}
+              />
+            </>
+          )}
           <Input
             placeholder="Transport Type"
             value={newBook.transportType}
@@ -120,7 +164,7 @@ export const StockInwardForm = ({
             onClick={onAddBook}
             className="flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 md:col-span-4"
           >
-            <Plus className="h-4 w-4" /> Add Stock
+            <Plus className="h-4 w-4" /> Add {newBook.type === 'inward' ? 'Inward' : 'Outward'} Stock
           </button>
         </div>
       </CardContent>

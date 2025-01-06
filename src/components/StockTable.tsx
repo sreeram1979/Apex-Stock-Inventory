@@ -19,13 +19,14 @@ export const StockTable = ({ books, onDeleteBook }: StockTableProps) => {
           <TableHeader>
             <TableRow>
               <TableHead>Title</TableHead>
+              <TableHead>Type</TableHead>
               <TableHead>Class</TableHead>
               <TableHead>Program</TableHead>
               <TableHead>Subject</TableHead>
               <TableHead>Quantity</TableHead>
-              <TableHead>Inward Date</TableHead>
-              <TableHead>Purchased From</TableHead>
-              <TableHead>Received By</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>From/To</TableHead>
+              <TableHead>By</TableHead>
               <TableHead>Transport Type</TableHead>
               <TableHead>LR Number</TableHead>
               <TableHead>Auto Charges</TableHead>
@@ -37,13 +38,16 @@ export const StockTable = ({ books, onDeleteBook }: StockTableProps) => {
             {books.map((book) => (
               <TableRow key={book.id}>
                 <TableCell>{book.title}</TableCell>
+                <TableCell className={book.type === 'inward' ? 'text-green-600' : 'text-red-600'}>
+                  {book.type === 'inward' ? 'Inward' : 'Outward'}
+                </TableCell>
                 <TableCell>{book.class}</TableCell>
                 <TableCell>{book.program}</TableCell>
                 <TableCell>{book.subject}</TableCell>
                 <TableCell>{book.quantity}</TableCell>
-                <TableCell>{book.inwardDate}</TableCell>
-                <TableCell>{book.purchasedFrom}</TableCell>
-                <TableCell>{book.receivedBy}</TableCell>
+                <TableCell>{book.type === 'inward' ? book.inwardDate : book.outwardDate}</TableCell>
+                <TableCell>{book.type === 'inward' ? book.purchasedFrom : book.sentTo}</TableCell>
+                <TableCell>{book.type === 'inward' ? book.receivedBy : book.sentBy}</TableCell>
                 <TableCell>{book.transportType}</TableCell>
                 <TableCell>{book.lrNumber}</TableCell>
                 <TableCell>{book.autoCharges}</TableCell>
