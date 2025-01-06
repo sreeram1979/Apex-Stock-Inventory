@@ -1,0 +1,129 @@
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { NewBookFormData } from "@/types/book";
+
+interface StockInwardFormProps {
+  newBook: NewBookFormData;
+  setNewBook: (book: NewBookFormData) => void;
+  onAddBook: () => void;
+  classes: string[];
+  programs: string[];
+  subjects: string[];
+}
+
+export const StockInwardForm = ({
+  newBook,
+  setNewBook,
+  onAddBook,
+  classes,
+  programs,
+  subjects,
+}: StockInwardFormProps) => {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Stock Inward</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Input
+            placeholder="Book Title"
+            value={newBook.title}
+            readOnly
+            className="bg-gray-100"
+          />
+          <Select
+            value={newBook.class}
+            onValueChange={(value) => setNewBook({ ...newBook, class: value })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select Class" />
+            </SelectTrigger>
+            <SelectContent>
+              {classes.map((grade) => (
+                <SelectItem key={grade} value={grade}>
+                  {grade}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={newBook.program}
+            onValueChange={(value) => setNewBook({ ...newBook, program: value })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select Program" />
+            </SelectTrigger>
+            <SelectContent>
+              {programs.map((program) => (
+                <SelectItem key={program} value={program}>
+                  {program}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
+            value={newBook.subject}
+            onValueChange={(value) => setNewBook({ ...newBook, subject: value })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select Subject" />
+            </SelectTrigger>
+            <SelectContent>
+              {subjects.map((subject) => (
+                <SelectItem key={subject} value={subject}>
+                  {subject}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Input
+            type="number"
+            placeholder="Quantity"
+            value={newBook.quantity}
+            onChange={(e) => setNewBook({ ...newBook, quantity: parseInt(e.target.value) || 0 })}
+          />
+          <Input
+            type="date"
+            value={newBook.inwardDate}
+            onChange={(e) => setNewBook({ ...newBook, inwardDate: e.target.value })}
+          />
+          <Input
+            placeholder="Purchased From"
+            value={newBook.purchasedFrom}
+            onChange={(e) => setNewBook({ ...newBook, purchasedFrom: e.target.value })}
+          />
+          <Input
+            placeholder="Received By"
+            value={newBook.receivedBy}
+            onChange={(e) => setNewBook({ ...newBook, receivedBy: e.target.value })}
+          />
+          <Input
+            placeholder="Transport Type"
+            value={newBook.transportType}
+            onChange={(e) => setNewBook({ ...newBook, transportType: e.target.value })}
+          />
+          <Input
+            placeholder="LR Number"
+            value={newBook.lrNumber}
+            onChange={(e) => setNewBook({ ...newBook, lrNumber: e.target.value })}
+          />
+          <Input
+            type="number"
+            placeholder="Auto Charges"
+            value={newBook.autoCharges}
+            onChange={(e) => setNewBook({ ...newBook, autoCharges: parseFloat(e.target.value) || 0 })}
+          />
+          <button
+            onClick={onAddBook}
+            className="flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 md:col-span-4"
+          >
+            <Plus className="h-4 w-4" /> Add Stock
+          </button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
