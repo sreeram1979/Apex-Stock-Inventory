@@ -3,7 +3,7 @@ import { StockInwardForm } from "@/components/StockInwardForm";
 import { StockTable } from "@/components/StockTable";
 import { Book, NewBookFormData } from "@/types/book";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
+import { Upload, Download } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 const Index = () => {
@@ -110,6 +110,33 @@ const Index = () => {
     input.click();
   };
 
+  const downloadTemplate = (type: 'inward' | 'outward') => {
+    const inwardHeaders = "Title,Class,Program,Subject,Quantity,PurchasedFrom,ReceivedBy,Date,TransportType,LRNumber,AutoCharges";
+    const outwardHeaders = "Title,Class,Program,Subject,Quantity,SentTo,SentBy,Date,TransportType,LRNumber,AutoCharges";
+    
+    const sampleInwardData = "10th Grade-Aspirants-Maths,10th Grade,Aspirants,Maths,100,Publisher XYZ,John Doe,2024-03-20,Road,LR123,500";
+    const sampleOutwardData = "10th Grade-Aspirants-Maths,10th Grade,Aspirants,Maths,50,School ABC,Jane Smith,2024-03-20,Road,LR124,300";
+
+    const headers = type === 'inward' ? inwardHeaders : outwardHeaders;
+    const sampleData = type === 'inward' ? sampleInwardData : sampleOutwardData;
+    const csvContent = `${headers}\n${sampleData}`;
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${type}_stock_template.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+
+    toast({
+      title: "Template Downloaded",
+      description: `${type.charAt(0).toUpperCase() + type.slice(1)} stock CSV template has been downloaded.`,
+    });
+  };
+
   const addBook = () => {
     const requiredFields = newBook.type === 'inward' 
       ? ['title', 'class', 'program', 'subject', 'purchasedFrom', 'receivedBy']
@@ -151,21 +178,39 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       <div className="max-w-7xl mx-auto space-y-8">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-3xl font-bold text-gray-900">Bookstore Stock Register</h1>
-          <div className="flex gap-4">
-            <Button
-              onClick={() => handleBulkUpload('inward')}
-              className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
-            >
-              <Upload className="h-4 w-4" /> Upload Inward CSV
-            </Button>
-            <Button
-              onClick={() => handleBulkUpload('outward')}
-              className="flex items-center gap-2 bg-red-600 hover:bg-red-700"
-            >
-              <Upload className="h-4 w-4" /> Upload Outward CSV
-            </Button>
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <div className="flex gap-2">
+              <Button
+                onClick={() => handleBulkUpload('inward')}
+                className="flex-1 sm:flex-none items-center gap-2 bg-green-600 hover:bg-green-700"
+              >
+                <Upload className="h-4 w-4" /> Upload Inward CSV
+              </Button>
+              <Button
+                onClick={() => downloadTemplate('inward')}
+                variant="outline"
+                className="flex-1 sm:flex-none items-center gap-2 border-green-600 text-green-600 hover:bg-green-50"
+              >
+                <Download className="h-4 w-4" /> Template
+              </Button>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => handleBulkUpload('outward')}
+                className="flex-1 sm:flex-none items-center gap-2 bg-red-600 hover:bg-red-700"
+              >
+                <Upload className="h-4 w-4" /> Upload Outward CSV
+              </Button>
+              <Button
+                onClick={() => downloadTemplate('outward')}
+                variant="outline"
+                className="flex-1 sm:flex-none items-center gap-2 border-red-600 text-red-600 hover:bg-red-50"
+              >
+                <Download className="h-4 w-4" /> Template
+              </Button>
+            </div>
           </div>
         </div>
         
