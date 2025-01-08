@@ -23,7 +23,7 @@ export const StockInwardForm = ({
   classes,
   programs,
   subjects,
-  items,
+  items = [], // Add default empty array
 }: StockInwardFormProps) => {
   const handleTypeChange = (type: 'inward' | 'outward') => {
     setNewBook({ 
@@ -73,7 +73,7 @@ export const StockInwardForm = ({
               <SelectValue placeholder="Select Item" />
             </SelectTrigger>
             <SelectContent>
-              {items.map((item) => (
+              {items?.map((item) => (
                 <SelectItem key={item.id} value={item.id}>
                   {item.title}
                 </SelectItem>

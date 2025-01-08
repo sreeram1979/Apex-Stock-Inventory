@@ -259,6 +259,7 @@ const Index = () => {
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-3xl font-bold text-gray-900">Bookstore Stock Register</h1>
+          <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex gap-2">
               <Button
                 onClick={() => handleBulkUpload('inward')}
