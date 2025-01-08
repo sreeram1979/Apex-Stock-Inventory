@@ -5,6 +5,10 @@ import { Book, NewBookFormData } from "@/types/book";
 import { Button } from "@/components/ui/button";
 import { Upload, Download } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { ItemForm } from "@/components/ItemForm";
+import { ItemList } from "@/components/ItemList";
+import { Item, ItemFormData } from "@/types/item";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Index = () => {
   const [books, setBooks] = useState<Book[]>(() => {
@@ -12,7 +16,20 @@ const Index = () => {
     return savedBooks ? JSON.parse(savedBooks) : [];
   });
 
+  const [items, setItems] = useState<Item[]>(() => {
+    const savedItems = localStorage.getItem('stockItems');
+    return savedItems ? JSON.parse(savedItems) : [];
+  });
+
   const { toast } = useToast();
+
+  const [newItem, setNewItem] = useState<ItemFormData>({
+    title: "",
+    class: "",
+    program: "",
+    subject: "",
+    initialStock: 0,
+  });
 
   const [newBook, setNewBook] = useState<NewBookFormData>({
     title: "",
@@ -36,16 +53,20 @@ const Index = () => {
     localStorage.setItem('stockBooks', JSON.stringify(books));
   }, [books]);
 
+  useEffect(() => {
+    localStorage.setItem('stockItems', JSON.stringify(items));
+  }, [items]);
+
   const classes = Array.from({ length: 10 }, (_, i) => `${i + 1}st Grade`);
   const programs = ["Aspirants", "Scholars", "Champions", "Jr Olympiads"];
   const subjects = ["Maths", "Physics", "Chemistry", "Biology", "Science", "English", "Reasoning", "GK"];
 
   useEffect(() => {
-    if (newBook.class && newBook.program && newBook.subject) {
-      const generatedTitle = `${newBook.class}-${newBook.program}-${newBook.subject}`;
-      setNewBook(prev => ({ ...prev, title: generatedTitle }));
+    if (newItem.class && newItem.program && newItem.subject) {
+      const generatedTitle = `${newItem.class}-${newItem.program}-${newItem.subject}`;
+      setNewItem(prev => ({ ...prev, title: generatedTitle }));
     }
-  }, [newBook.class, newBook.program, newBook.subject]);
+  }, [newItem.class, newItem.program, newItem.subject]);
 
   const handleBulkUpload = (type: 'inward' | 'outward') => {
     const input = document.createElement('input');
@@ -137,13 +158,62 @@ const Index = () => {
     });
   };
 
+  const addItem = () => {
+    const requiredFields = ['class', 'program', 'subject', 'initialStock'];
+    const hasEmptyRequiredFields = requiredFields.some(field => !newItem[field as keyof ItemFormData]);
+    
+    if (hasEmptyRequiredFields) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const item: Item = {
+      id: Math.random().toString(36).substr(2, 9),
+      ...newItem,
+    };
+
+    setItems([...items, item]);
+    setNewItem({
+      title: "",
+      class: "",
+      program: "",
+      subject: "",
+      initialStock: 0,
+    });
+
+    toast({
+      title: "Success",
+      description: "Item added successfully",
+    });
+  };
+
+  const deleteItem = (id: string) => {
+    setItems(items.filter((item) => item.id !== id));
+    toast({
+      title: "Success",
+      description: "Item deleted successfully",
+    });
+  };
+
   const addBook = () => {
     const requiredFields = newBook.type === 'inward' 
-      ? ['title', 'class', 'program', 'subject', 'purchasedFrom', 'receivedBy']
-      : ['title', 'class', 'program', 'subject', 'sentTo', 'sentBy'];
+      ? ['title', 'quantity', 'purchasedFrom', 'receivedBy']
+      : ['title', 'quantity', 'sentTo', 'sentBy'];
 
     const hasEmptyRequiredFields = requiredFields.some(field => !newBook[field as keyof NewBookFormData]);
-    if (hasEmptyRequiredFields) return;
+    
+    if (hasEmptyRequiredFields) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
     
     const book: Book = {
       id: Math.random().toString(36).substr(2, 9),
@@ -169,10 +239,19 @@ const Index = () => {
       lrNumber: "",
       autoCharges: 0,
     });
+
+    toast({
+      title: "Success",
+      description: "Stock movement recorded successfully",
+    });
   };
 
   const deleteBook = (id: string) => {
     setBooks(books.filter((book) => book.id !== id));
+    toast({
+      title: "Success",
+      description: "Stock record deleted successfully",
+    });
   };
 
   return (
@@ -180,7 +259,6 @@ const Index = () => {
       <div className="max-w-7xl mx-auto space-y-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-3xl font-bold text-gray-900">Bookstore Stock Register</h1>
-          <div className="flex flex-col gap-4 sm:flex-row">
             <div className="flex gap-2">
               <Button
                 onClick={() => handleBulkUpload('inward')}
@@ -214,16 +292,37 @@ const Index = () => {
           </div>
         </div>
         
-        <StockInwardForm
-          newBook={newBook}
-          setNewBook={setNewBook}
-          onAddBook={addBook}
-          classes={classes}
-          programs={programs}
-          subjects={subjects}
-        />
-
-        <StockTable books={books} onDeleteBook={deleteBook} />
+        <Tabs defaultValue="items" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="items">Manage Items</TabsTrigger>
+            <TabsTrigger value="stock">Stock Movement</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="items" className="space-y-4">
+            <ItemForm
+              item={newItem}
+              setItem={setNewItem}
+              onAddItem={addItem}
+              classes={classes}
+              programs={programs}
+              subjects={subjects}
+            />
+            <ItemList items={items} onDeleteItem={deleteItem} />
+          </TabsContent>
+          
+          <TabsContent value="stock" className="space-y-4">
+            <StockInwardForm
+              newBook={newBook}
+              setNewBook={setNewBook}
+              onAddBook={addBook}
+              classes={classes}
+              programs={programs}
+              subjects={subjects}
+              items={items}
+            />
+            <StockTable books={books} onDeleteBook={deleteBook} />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

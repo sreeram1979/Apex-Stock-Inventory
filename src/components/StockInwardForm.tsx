@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { NewBookFormData } from "@/types/book";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Item } from "@/types/item";
 
 interface StockInwardFormProps {
   newBook: NewBookFormData;
@@ -12,6 +13,7 @@ interface StockInwardFormProps {
   classes: string[];
   programs: string[];
   subjects: string[];
+  items: Item[];
 }
 
 export const StockInwardForm = ({
@@ -21,12 +23,12 @@ export const StockInwardForm = ({
   classes,
   programs,
   subjects,
+  items,
 }: StockInwardFormProps) => {
   const handleTypeChange = (type: 'inward' | 'outward') => {
     setNewBook({ 
       ...newBook, 
       type,
-      // Reset related fields when switching types
       purchasedFrom: '',
       sentTo: '',
       receivedBy: '',
@@ -34,6 +36,19 @@ export const StockInwardForm = ({
       inwardDate: type === 'inward' ? new Date().toISOString().split('T')[0] : '',
       outwardDate: type === 'outward' ? new Date().toISOString().split('T')[0] : ''
     });
+  };
+
+  const handleItemSelect = (itemId: string) => {
+    const selectedItem = items.find(item => item.id === itemId);
+    if (selectedItem) {
+      setNewBook({
+        ...newBook,
+        title: selectedItem.title,
+        class: selectedItem.class,
+        program: selectedItem.program,
+        subject: selectedItem.subject,
+      });
+    }
   };
 
   return (
@@ -50,57 +65,39 @@ export const StockInwardForm = ({
         </Tabs>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Input
-            placeholder="Book Title"
+          <Select
             value={newBook.title}
+            onValueChange={handleItemSelect}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select Item" />
+            </SelectTrigger>
+            <SelectContent>
+              {items.map((item) => (
+                <SelectItem key={item.id} value={item.id}>
+                  {item.title}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Input
+            placeholder="Class"
+            value={newBook.class}
             readOnly
             className="bg-gray-100"
           />
-          <Select
-            value={newBook.class}
-            onValueChange={(value) => setNewBook({ ...newBook, class: value })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select Class" />
-            </SelectTrigger>
-            <SelectContent>
-              {classes.map((grade) => (
-                <SelectItem key={grade} value={grade}>
-                  {grade}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select
+          <Input
+            placeholder="Program"
             value={newBook.program}
-            onValueChange={(value) => setNewBook({ ...newBook, program: value })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select Program" />
-            </SelectTrigger>
-            <SelectContent>
-              {programs.map((program) => (
-                <SelectItem key={program} value={program}>
-                  {program}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select
+            readOnly
+            className="bg-gray-100"
+          />
+          <Input
+            placeholder="Subject"
             value={newBook.subject}
-            onValueChange={(value) => setNewBook({ ...newBook, subject: value })}
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select Subject" />
-            </SelectTrigger>
-            <SelectContent>
-              {subjects.map((subject) => (
-                <SelectItem key={subject} value={subject}>
-                  {subject}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+            readOnly
+            className="bg-gray-100"
+          />
           <Input
             type="number"
             placeholder="Quantity"
