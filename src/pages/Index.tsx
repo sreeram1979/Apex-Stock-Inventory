@@ -68,7 +68,7 @@ const Index = () => {
     }
   }, [newItem.class, newItem.program, newItem.subject]);
 
-  const handleBulkUpload = (type: 'inward' | 'outward') => {
+  const handleBulkItemUpload = () => {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.csv';
@@ -83,45 +83,34 @@ const Index = () => {
         const lines = csvText.split('\n');
         const headers = lines[0].split(',').map(header => header.trim());
         
-        const newBooks: Book[] = [];
+        const newItems: Item[] = [];
         
         for (let i = 1; i < lines.length; i++) {
           if (!lines[i].trim()) continue;
           
           const values = lines[i].split(',').map(value => value.trim());
-          const bookData: any = {};
+          const itemData: any = {};
           
           headers.forEach((header, index) => {
-            bookData[header.toLowerCase().replace(/\s+/g, '')] = values[index];
+            itemData[header.toLowerCase().replace(/\s+/g, '')] = values[index];
           });
 
-          const book: Book = {
+          const item: Item = {
             id: Math.random().toString(36).substr(2, 9),
-            title: bookData.title || '',
-            class: bookData.class || '',
-            program: bookData.program || '',
-            subject: bookData.subject || '',
-            quantity: parseInt(bookData.quantity) || 0,
-            type: type,
-            purchasedFrom: type === 'inward' ? bookData.purchasedfrom || '' : '',
-            sentTo: type === 'outward' ? bookData.sentto || '' : '',
-            receivedBy: type === 'inward' ? bookData.receivedby || '' : '',
-            sentBy: type === 'outward' ? bookData.sentby || '' : '',
-            inwardDate: type === 'inward' ? bookData.date || new Date().toISOString().split('T')[0] : '',
-            outwardDate: type === 'outward' ? bookData.date || new Date().toISOString().split('T')[0] : '',
-            transportType: bookData.transporttype || '',
-            lrNumber: bookData.lrnumber || '',
-            autoCharges: parseFloat(bookData.autocharges) || 0,
-            lastUpdated: new Date().toLocaleDateString(),
+            title: `${itemData.class}-${itemData.program}-${itemData.subject}`,
+            class: itemData.class || '',
+            program: itemData.program || '',
+            subject: itemData.subject || '',
+            initialStock: parseInt(itemData.initialstock) || 0,
           };
 
-          newBooks.push(book);
+          newItems.push(item);
         }
 
-        setBooks(prev => [...prev, ...newBooks]);
+        setItems(prev => [...prev, ...newItems]);
         toast({
           title: "Success",
-          description: `Successfully uploaded ${newBooks.length} ${type} records`,
+          description: `Successfully uploaded ${newItems.length} items`,
         });
       };
 
@@ -131,22 +120,16 @@ const Index = () => {
     input.click();
   };
 
-  const downloadTemplate = (type: 'inward' | 'outward') => {
-    const inwardHeaders = "Title,Class,Program,Subject,Quantity,PurchasedFrom,ReceivedBy,Date,TransportType,LRNumber,AutoCharges";
-    const outwardHeaders = "Title,Class,Program,Subject,Quantity,SentTo,SentBy,Date,TransportType,LRNumber,AutoCharges";
-    
-    const sampleInwardData = "10th Grade-Aspirants-Maths,10th Grade,Aspirants,Maths,100,Publisher XYZ,John Doe,2024-03-20,Road,LR123,500";
-    const sampleOutwardData = "10th Grade-Aspirants-Maths,10th Grade,Aspirants,Maths,50,School ABC,Jane Smith,2024-03-20,Road,LR124,300";
-
-    const headers = type === 'inward' ? inwardHeaders : outwardHeaders;
-    const sampleData = type === 'inward' ? sampleInwardData : sampleOutwardData;
+  const downloadItemTemplate = () => {
+    const headers = "Class,Program,Subject,InitialStock";
+    const sampleData = "10th Grade,Aspirants,Maths,100";
     const csvContent = `${headers}\n${sampleData}`;
     
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${type}_stock_template.csv`;
+    a.download = `items_template.csv`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -154,7 +137,7 @@ const Index = () => {
 
     toast({
       title: "Template Downloaded",
-      description: `${type.charAt(0).toUpperCase() + type.slice(1)} stock CSV template has been downloaded.`,
+      description: "Items CSV template has been downloaded.",
     });
   };
 
@@ -300,6 +283,21 @@ const Index = () => {
           </TabsList>
           
           <TabsContent value="items" className="space-y-4">
+            <div className="flex gap-2 mb-4">
+              <Button
+                onClick={handleBulkItemUpload}
+                className="flex-1 sm:flex-none items-center gap-2 bg-blue-600 hover:bg-blue-700"
+              >
+                <Upload className="h-4 w-4" /> Upload Items CSV
+              </Button>
+              <Button
+                onClick={downloadItemTemplate}
+                variant="outline"
+                className="flex-1 sm:flex-none items-center gap-2 border-blue-600 text-blue-600 hover:bg-blue-50"
+              >
+                <Download className="h-4 w-4" /> Items Template
+              </Button>
+            </div>
             <ItemForm
               item={newItem}
               setItem={setNewItem}
