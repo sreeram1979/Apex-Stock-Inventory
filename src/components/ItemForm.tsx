@@ -3,6 +3,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Plus } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ItemFormData } from "@/types/item";
+import { Button } from "@/components/ui/button";
 
 interface ItemFormProps {
   item: ItemFormData;
@@ -22,17 +23,17 @@ export const ItemForm = ({
   subjects,
 }: ItemFormProps) => {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Add New Item</CardTitle>
+    <Card className="bg-white shadow-sm">
+      <CardHeader className="border-b">
+        <CardTitle className="text-lg font-semibold text-gray-900">Add New Item</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Select
             value={item.class}
             onValueChange={(value) => setItem({ ...item, class: value })}
           >
-            <SelectTrigger>
+            <SelectTrigger className="bg-white">
               <SelectValue placeholder="Select Class" />
             </SelectTrigger>
             <SelectContent>
@@ -47,7 +48,7 @@ export const ItemForm = ({
             value={item.program}
             onValueChange={(value) => setItem({ ...item, program: value })}
           >
-            <SelectTrigger>
+            <SelectTrigger className="bg-white">
               <SelectValue placeholder="Select Program" />
             </SelectTrigger>
             <SelectContent>
@@ -62,7 +63,7 @@ export const ItemForm = ({
             value={item.subject}
             onValueChange={(value) => setItem({ ...item, subject: value })}
           >
-            <SelectTrigger>
+            <SelectTrigger className="bg-white">
               <SelectValue placeholder="Select Subject" />
             </SelectTrigger>
             <SelectContent>
@@ -78,13 +79,14 @@ export const ItemForm = ({
             placeholder="Initial Stock"
             value={item.initialStock}
             onChange={(e) => setItem({ ...item, initialStock: parseInt(e.target.value) || 0 })}
+            className="bg-white"
           />
-          <button
+          <Button
             onClick={onAddItem}
-            className="flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 md:col-span-4"
+            className="flex items-center justify-center gap-2 bg-[#8B5CF6] hover:bg-[#7C3AED] md:col-span-4"
           >
             <Plus className="h-4 w-4" /> Add Item
-          </button>
+          </Button>
         </div>
       </CardContent>
     </Card>

@@ -3,12 +3,14 @@ import { StockInwardForm } from "@/components/StockInwardForm";
 import { StockTable } from "@/components/StockTable";
 import { Book, NewBookFormData } from "@/types/book";
 import { Button } from "@/components/ui/button";
-import { Upload, Download } from "lucide-react";
+import { Upload, Download, BookOpen } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { ItemForm } from "@/components/ItemForm";
 import { ItemList } from "@/components/ItemList";
 import { Item, ItemFormData } from "@/types/item";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Header } from "@/components/Header";
+import { BulkActions } from "@/components/BulkActions";
 
 const Index = () => {
   const [books, setBooks] = useState<Book[]>(() => {
@@ -238,91 +240,48 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-7xl mx-auto space-y-8">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <h1 className="text-3xl font-bold text-gray-900">Bookstore Stock Register</h1>
-          <div className="flex flex-col sm:flex-row gap-4">
-            <div className="flex gap-2">
-              <Button
-                onClick={() => handleBulkUpload('inward')}
-                className="flex-1 sm:flex-none items-center gap-2 bg-green-600 hover:bg-green-700"
-              >
-                <Upload className="h-4 w-4" /> Upload Inward CSV
-              </Button>
-              <Button
-                onClick={() => downloadTemplate('inward')}
-                variant="outline"
-                className="flex-1 sm:flex-none items-center gap-2 border-green-600 text-green-600 hover:bg-green-50"
-              >
-                <Download className="h-4 w-4" /> Template
-              </Button>
-            </div>
-            <div className="flex gap-2">
-              <Button
-                onClick={() => handleBulkUpload('outward')}
-                className="flex-1 sm:flex-none items-center gap-2 bg-red-600 hover:bg-red-700"
-              >
-                <Upload className="h-4 w-4" /> Upload Outward CSV
-              </Button>
-              <Button
-                onClick={() => downloadTemplate('outward')}
-                variant="outline"
-                className="flex-1 sm:flex-none items-center gap-2 border-red-600 text-red-600 hover:bg-red-50"
-              >
-                <Download className="h-4 w-4" /> Template
-              </Button>
-            </div>
-          </div>
+    <div className="min-h-screen bg-[#F8F9FC]">
+      <Header />
+      <main className="container mx-auto px-4 py-8">
+        <div className="space-y-8">
+          <BulkActions 
+            handleBulkItemUpload={handleBulkItemUpload} 
+            downloadItemTemplate={downloadItemTemplate} 
+          />
+          
+          <Tabs defaultValue="items" className="space-y-6">
+            <TabsList className="w-full border-b">
+              <TabsTrigger value="items" className="flex-1">Manage Items</TabsTrigger>
+              <TabsTrigger value="stock" className="flex-1">Stock Movement</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="items" className="space-y-6">
+              <ItemForm
+                item={newItem}
+                setItem={setNewItem}
+                onAddItem={addItem}
+                classes={classes}
+                programs={programs}
+                subjects={subjects}
+              />
+              <ItemList items={items} onDeleteItem={deleteItem} />
+            </TabsContent>
+            
+            <TabsContent value="stock" className="space-y-6">
+              <StockInwardForm
+                newBook={newBook}
+                setNewBook={setNewBook}
+                onAddBook={addBook}
+                classes={classes}
+                programs={programs}
+                subjects={subjects}
+                items={items}
+              />
+              <StockTable books={books} onDeleteBook={deleteBook} />
+            </TabsContent>
+          </Tabs>
         </div>
-        
-        <Tabs defaultValue="items" className="space-y-4">
-          <TabsList>
-            <TabsTrigger value="items">Manage Items</TabsTrigger>
-            <TabsTrigger value="stock">Stock Movement</TabsTrigger>
-          </TabsList>
-          
-          <TabsContent value="items" className="space-y-4">
-            <div className="flex gap-2 mb-4">
-              <Button
-                onClick={handleBulkItemUpload}
-                className="flex-1 sm:flex-none items-center gap-2 bg-blue-600 hover:bg-blue-700"
-              >
-                <Upload className="h-4 w-4" /> Upload Items CSV
-              </Button>
-              <Button
-                onClick={downloadItemTemplate}
-                variant="outline"
-                className="flex-1 sm:flex-none items-center gap-2 border-blue-600 text-blue-600 hover:bg-blue-50"
-              >
-                <Download className="h-4 w-4" /> Items Template
-              </Button>
-            </div>
-            <ItemForm
-              item={newItem}
-              setItem={setNewItem}
-              onAddItem={addItem}
-              classes={classes}
-              programs={programs}
-              subjects={subjects}
-            />
-            <ItemList items={items} onDeleteItem={deleteItem} />
-          </TabsContent>
-          
-          <TabsContent value="stock" className="space-y-4">
-            <StockInwardForm
-              newBook={newBook}
-              setNewBook={setNewBook}
-              onAddBook={addBook}
-              classes={classes}
-              programs={programs}
-              subjects={subjects}
-              items={items}
-            />
-            <StockTable books={books} onDeleteBook={deleteBook} />
-          </TabsContent>
-        </Tabs>
-      </div>
+      </main>
     </div>
   );
 };
