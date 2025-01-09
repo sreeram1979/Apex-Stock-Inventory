@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Upload, Download } from "lucide-react";
+import { Download } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Book } from "@/types/book";
 
@@ -9,69 +9,6 @@ interface BulkActionsProps {
 
 export const BulkActions = ({ onBooksUploaded }: BulkActionsProps) => {
   const { toast } = useToast();
-
-  const handleStockUpload = (type: 'inward' | 'outward') => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.csv';
-    
-    input.onchange = async (e) => {
-      const file = (e.target as HTMLInputElement).files?.[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const csvText = event.target?.result as string;
-        const lines = csvText.split('\n');
-        const headers = lines[0].split(',').map(header => header.trim());
-        
-        const newBooks: Book[] = [];
-        
-        for (let i = 1; i < lines.length; i++) {
-          if (!lines[i].trim()) continue;
-          
-          const values = lines[i].split(',').map(value => value.trim());
-          const bookData: any = {};
-          
-          headers.forEach((header, index) => {
-            bookData[header.toLowerCase().replace(/\s+/g, '')] = values[index];
-          });
-
-          const book: Book = {
-            id: Math.random().toString(36).substr(2, 9),
-            title: bookData.title || '',
-            class: bookData.class || '',
-            program: bookData.program || '',
-            subject: bookData.subject || '',
-            quantity: parseInt(bookData.quantity) || 0,
-            type,
-            purchasedFrom: type === 'inward' ? bookData.purchasedfrom || '' : '',
-            sentTo: type === 'outward' ? bookData.sentto || '' : '',
-            receivedBy: type === 'inward' ? bookData.receivedby || '' : '',
-            sentBy: type === 'outward' ? bookData.sentby || '' : '',
-            inwardDate: type === 'inward' ? bookData.date || new Date().toISOString().split('T')[0] : '',
-            outwardDate: type === 'outward' ? bookData.date || new Date().toISOString().split('T')[0] : '',
-            transportType: bookData.transporttype || '',
-            lrNumber: bookData.lrnumber || '',
-            autoCharges: parseFloat(bookData.autocharges) || 0,
-            lastUpdated: new Date().toLocaleDateString()
-          };
-
-          newBooks.push(book);
-        }
-
-        onBooksUploaded(newBooks);
-        toast({
-          title: "Success",
-          description: `Successfully uploaded ${newBooks.length} ${type} records`,
-        });
-      };
-
-      reader.readAsText(file);
-    };
-
-    input.click();
-  };
 
   const downloadTemplate = (type: 'inward' | 'outward') => {
     const headers = type === 'inward' 
@@ -103,14 +40,8 @@ export const BulkActions = ({ onBooksUploaded }: BulkActionsProps) => {
   return (
     <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200 space-y-4">
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Stock Inward</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Stock Inward Template</h3>
         <div className="flex gap-3">
-          <Button
-            onClick={() => handleStockUpload('inward')}
-            className="flex-1 bg-[#8B5CF6] hover:bg-[#7C3AED]"
-          >
-            <Upload className="h-4 w-4 mr-2" /> Upload Inward CSV
-          </Button>
           <Button
             onClick={() => downloadTemplate('inward')}
             variant="outline"
@@ -122,14 +53,8 @@ export const BulkActions = ({ onBooksUploaded }: BulkActionsProps) => {
       </div>
       
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Stock Outward</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Stock Outward Template</h3>
         <div className="flex gap-3">
-          <Button
-            onClick={() => handleStockUpload('outward')}
-            className="flex-1 bg-[#8B5CF6] hover:bg-[#7C3AED]"
-          >
-            <Upload className="h-4 w-4 mr-2" /> Upload Outward CSV
-          </Button>
           <Button
             onClick={() => downloadTemplate('outward')}
             variant="outline"
