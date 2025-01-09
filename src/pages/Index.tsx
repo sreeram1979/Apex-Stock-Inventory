@@ -157,12 +157,20 @@ const Index = () => {
     });
   };
 
+  const handleBooksUploaded = (newBooks: Book[]) => {
+    setBooks(prevBooks => [...prevBooks, ...newBooks]);
+    toast({
+      title: "Success",
+      description: `Successfully added ${newBooks.length} stock records`,
+    });
+  };
+
   return (
     <div className="min-h-screen bg-[#F8F9FC]">
       <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="space-y-8">
-          <BulkActions onItemsUploaded={setItems} />
+          <BulkActions onBooksUploaded={handleBooksUploaded} />
           
           <Tabs defaultValue="items" className="space-y-6">
             <TabsList className="w-full border-b">
