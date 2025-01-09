@@ -10,8 +10,6 @@ interface BulkActionsProps {
 }
 
 export const BulkActions = ({ 
-  handleBulkItemUpload, 
-  downloadItemTemplate,
   onItemsUploaded 
 }: BulkActionsProps) => {
   const { toast } = useToast();
@@ -49,7 +47,7 @@ export const BulkActions = ({
             class: itemData.class || '',
             program: itemData.program || '',
             subject: itemData.subject || '',
-            initialStock: parseInt(itemData.initialstock) || 0, // Accepts zero values
+            initialStock: parseInt(itemData.initialstock) || 0,
           };
 
           newItems.push(item);
@@ -70,7 +68,7 @@ export const BulkActions = ({
 
   const downloadItemsTemplate = () => {
     const headers = "Class,Program,Subject,InitialStock";
-    const sampleData = "10th Grade,Aspirants,Maths,0"; // Example with zero initial stock
+    const sampleData = "10th Grade,Aspirants,Maths,0";
     const csvContent = `${headers}\n${sampleData}`;
     
     const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -90,43 +88,22 @@ export const BulkActions = ({
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Items Management</h3>
-        <div className="flex gap-3">
-          <Button
-            onClick={handleItemUpload}
-            className="flex-1 bg-[#8B5CF6] hover:bg-[#7C3AED]"
-          >
-            <Upload className="h-4 w-4 mr-2" /> Upload Items CSV
-          </Button>
-          <Button
-            onClick={downloadItemsTemplate}
-            variant="outline"
-            className="flex-1 border-[#8B5CF6] text-[#8B5CF6] hover:bg-[#8B5CF6]/10"
-          >
-            <Download className="h-4 w-4 mr-2" /> Template
-          </Button>
-        </div>
-      </div>
-      
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Stock Actions</h3>
-        <div className="flex gap-3">
-          <Button
-            onClick={() => handleBulkItemUpload('inward')}
-            className="flex-1 bg-[#10B981] hover:bg-[#059669]"
-          >
-            <Upload className="h-4 w-4 mr-2" /> Upload Stock
-          </Button>
-          <Button
-            onClick={() => downloadItemTemplate('inward')}
-            variant="outline"
-            className="flex-1 border-[#10B981] text-[#10B981] hover:bg-[#10B981]/10"
-          >
-            <Download className="h-4 w-4 mr-2" /> Template
-          </Button>
-        </div>
+    <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+      <h3 className="text-lg font-semibold text-gray-900 mb-4">Items Management</h3>
+      <div className="flex gap-3">
+        <Button
+          onClick={handleItemUpload}
+          className="flex-1 bg-[#8B5CF6] hover:bg-[#7C3AED]"
+        >
+          <Upload className="h-4 w-4 mr-2" /> Upload Items CSV
+        </Button>
+        <Button
+          onClick={downloadItemsTemplate}
+          variant="outline"
+          className="flex-1 border-[#8B5CF6] text-[#8B5CF6] hover:bg-[#8B5CF6]/10"
+        >
+          <Download className="h-4 w-4 mr-2" /> Template
+        </Button>
       </div>
     </div>
   );
