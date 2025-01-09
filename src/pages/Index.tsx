@@ -2,8 +2,6 @@ import { useState, useEffect } from "react";
 import { StockInwardForm } from "@/components/StockInwardForm";
 import { StockTable } from "@/components/StockTable";
 import { Book, NewBookFormData } from "@/types/book";
-import { Button } from "@/components/ui/button";
-import { Upload, Download, BookOpen } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { ItemForm } from "@/components/ItemForm";
 import { ItemList } from "@/components/ItemList";
@@ -124,7 +122,7 @@ const Index = () => {
 
   const downloadItemTemplate = () => {
     const headers = "Class,Program,Subject,InitialStock";
-    const sampleData = "10th Grade,Aspirants,Maths,100";
+    const sampleData = "10th Grade,Aspirants,Maths,0";
     const csvContent = `${headers}\n${sampleData}`;
     
     const blob = new Blob([csvContent], { type: 'text/csv' });
@@ -246,7 +244,8 @@ const Index = () => {
         <div className="space-y-8">
           <BulkActions 
             handleBulkItemUpload={handleBulkItemUpload} 
-            downloadItemTemplate={downloadItemTemplate} 
+            downloadItemTemplate={downloadItemTemplate}
+            onItemsUploaded={setItems}
           />
           
           <Tabs defaultValue="items" className="space-y-6">
