@@ -24,7 +24,7 @@ export const StockInwardForm = ({
   classes,
   programs,
   subjects,
-  items = [], // Add default empty array
+  items = [],
 }: StockInwardFormProps) => {
   const handleTypeChange = (type: 'inward' | 'outward') => {
     setNewBook({ 
@@ -39,17 +39,21 @@ export const StockInwardForm = ({
     });
   };
 
-  const handleItemSelect = (itemId: string) => {
-    const selectedItem = items.find(item => item.id === itemId);
-    if (selectedItem) {
-      setNewBook({
-        ...newBook,
-        title: selectedItem.title,
-        class: selectedItem.class,
-        program: selectedItem.program,
-        subject: selectedItem.subject,
-      });
+  const generateTitle = (classValue: string, program: string, subject: string) => {
+    if (classValue && program && subject) {
+      return `${classValue}-${program}-${subject}`;
     }
+    return '';
+  };
+
+  const handleFieldChange = (field: 'class' | 'program' | 'subject', value: string) => {
+    const updatedBook = { ...newBook, [field]: value };
+    updatedBook.title = generateTitle(
+      field === 'class' ? value : updatedBook.class,
+      field === 'program' ? value : updatedBook.program,
+      field === 'subject' ? value : updatedBook.subject
+    );
+    setNewBook(updatedBook);
   };
 
   return (
@@ -67,13 +71,14 @@ export const StockInwardForm = ({
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Input
-            placeholder="Title"
+            placeholder="Title (Auto-generated)"
             value={newBook.title}
-            onChange={(e) => setNewBook({ ...newBook, title: e.target.value })}
+            readOnly
+            className="bg-gray-100"
           />
           <Select
             value={newBook.class}
-            onValueChange={(value) => setNewBook({ ...newBook, class: value })}
+            onValueChange={(value) => handleFieldChange('class', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select Class" />
@@ -88,7 +93,7 @@ export const StockInwardForm = ({
           </Select>
           <Select
             value={newBook.program}
-            onValueChange={(value) => setNewBook({ ...newBook, program: value })}
+            onValueChange={(value) => handleFieldChange('program', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select Program" />
@@ -103,7 +108,7 @@ export const StockInwardForm = ({
           </Select>
           <Select
             value={newBook.subject}
-            onValueChange={(value) => setNewBook({ ...newBook, subject: value })}
+            onValueChange={(value) => handleFieldChange('subject', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Select Subject" />
