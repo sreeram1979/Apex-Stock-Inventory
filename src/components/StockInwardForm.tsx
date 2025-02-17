@@ -1,3 +1,4 @@
+
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus } from "lucide-react";
@@ -65,39 +66,56 @@ export const StockInwardForm = ({
         </Tabs>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Select
+          <Input
+            placeholder="Title"
             value={newBook.title}
-            onValueChange={handleItemSelect}
+            onChange={(e) => setNewBook({ ...newBook, title: e.target.value })}
+          />
+          <Select
+            value={newBook.class}
+            onValueChange={(value) => setNewBook({ ...newBook, class: value })}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select Item" />
+              <SelectValue placeholder="Select Class" />
             </SelectTrigger>
             <SelectContent>
-              {items?.map((item) => (
-                <SelectItem key={item.id} value={item.id}>
-                  {item.title}
+              {classes.map((grade) => (
+                <SelectItem key={grade} value={grade}>
+                  {grade}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-          <Input
-            placeholder="Class"
-            value={newBook.class}
-            readOnly
-            className="bg-gray-100"
-          />
-          <Input
-            placeholder="Program"
+          <Select
             value={newBook.program}
-            readOnly
-            className="bg-gray-100"
-          />
-          <Input
-            placeholder="Subject"
+            onValueChange={(value) => setNewBook({ ...newBook, program: value })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select Program" />
+            </SelectTrigger>
+            <SelectContent>
+              {programs.map((program) => (
+                <SelectItem key={program} value={program}>
+                  {program}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select
             value={newBook.subject}
-            readOnly
-            className="bg-gray-100"
-          />
+            onValueChange={(value) => setNewBook({ ...newBook, subject: value })}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select Subject" />
+            </SelectTrigger>
+            <SelectContent>
+              {subjects.map((subject) => (
+                <SelectItem key={subject} value={subject}>
+                  {subject}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Input
             type="number"
             placeholder="Quantity"
