@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { StockInwardForm } from "@/components/StockInwardForm";
 import { StockTable } from "@/components/StockTable";
 import { Book, NewBookFormData } from "@/types/book";
@@ -12,6 +13,7 @@ interface StockManagementProps {
   classes: string[];
   programs: string[];
   subjects: string[];
+  defaultType: 'inward' | 'outward';
 }
 
 export const StockManagement = ({ 
@@ -19,7 +21,8 @@ export const StockManagement = ({
   setItems,
   classes,
   programs,
-  subjects 
+  subjects,
+  defaultType 
 }: StockManagementProps) => {
   const [books, setBooks] = useState<Book[]>(() => {
     const savedBooks = localStorage.getItem('stockBooks');
@@ -34,7 +37,7 @@ export const StockManagement = ({
     program: "",
     subject: "",
     quantity: 0,
-    type: "inward",
+    type: defaultType,
     purchasedFrom: "",
     sentTo: "",
     receivedBy: "",
@@ -46,8 +49,15 @@ export const StockManagement = ({
     autoCharges: 0,
   });
 
+  useEffect(() => {
+    setNewBook(prev => ({
+      ...prev,
+      type: defaultType
+    }));
+  }, [defaultType]);
+
   const addBook = () => {
-    const requiredFields = newBook.type === 'inward' 
+    const requiredFields = defaultType === 'inward' 
       ? ['title', 'quantity', 'purchasedFrom', 'receivedBy']
       : ['title', 'quantity', 'sentTo', 'sentBy'];
 
@@ -65,6 +75,7 @@ export const StockManagement = ({
     const book: Book = {
       id: Math.random().toString(36).substr(2, 9),
       ...newBook,
+      type: defaultType,
       lastUpdated: new Date().toLocaleDateString(),
     };
 
@@ -83,7 +94,7 @@ export const StockManagement = ({
       program: "",
       subject: "",
       quantity: 0,
-      type: "inward",
+      type: defaultType,
       purchasedFrom: "",
       sentTo: "",
       receivedBy: "",
@@ -109,6 +120,8 @@ export const StockManagement = ({
     });
   };
 
+  const filteredBooks = books.filter(book => book.type === defaultType);
+
   return (
     <div className="space-y-6">
       <StockInwardForm
@@ -120,7 +133,7 @@ export const StockManagement = ({
         subjects={subjects}
         items={items}
       />
-      <StockTable books={books} onDeleteBook={deleteBook} />
+      <StockTable books={filteredBooks} onDeleteBook={deleteBook} />
     </div>
   );
 };

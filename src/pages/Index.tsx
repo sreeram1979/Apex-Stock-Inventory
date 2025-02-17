@@ -1,11 +1,10 @@
+
 import { useState } from "react";
-import { ItemForm } from "@/components/ItemForm";
-import { ItemList } from "@/components/ItemList";
-import { Item, ItemFormData } from "@/types/item";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Item } from "@/types/item";
 import { Header } from "@/components/Header";
 import { StockManagement } from "@/components/StockManagement";
-import { useToast } from "@/components/ui/use-toast";
+import { BulkActions } from "@/components/BulkActions";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Index = () => {
   const [items, setItems] = useState<Item[]>(() => {
@@ -13,59 +12,12 @@ const Index = () => {
     return savedItems ? JSON.parse(savedItems) : [];
   });
 
-  const { toast } = useToast();
-
-  const [newItem, setNewItem] = useState<ItemFormData>({
-    title: "",
-    class: "",
-    program: "",
-    subject: "",
-    initialStock: 0,
-  });
-
   const classes = Array.from({ length: 10 }, (_, i) => `${i + 1}st Grade`);
   const programs = ["Aspirants", "Scholars", "Champions", "Jr Olympiads"];
   const subjects = ["Maths", "Physics", "Chemistry", "Biology", "Science", "English", "Reasoning", "GK"];
 
-  const addItem = () => {
-    const requiredFields = ['class', 'program', 'subject', 'initialStock'];
-    const hasEmptyRequiredFields = requiredFields.some(field => !newItem[field as keyof ItemFormData]);
-    
-    if (hasEmptyRequiredFields) {
-      toast({
-        title: "Error",
-        description: "Please fill in all required fields",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const item: Item = {
-      id: Math.random().toString(36).substr(2, 9),
-      ...newItem,
-    };
-
-    setItems([...items, item]);
-    setNewItem({
-      title: "",
-      class: "",
-      program: "",
-      subject: "",
-      initialStock: 0,
-    });
-
-    toast({
-      title: "Success",
-      description: "Item added successfully",
-    });
-  };
-
-  const deleteItem = (id: string) => {
-    setItems(items.filter((item) => item.id !== id));
-    toast({
-      title: "Success",
-      description: "Item deleted successfully",
-    });
+  const handleBooksUploaded = (newBooks: any[]) => {
+    // Handle bulk upload if needed
   };
 
   return (
@@ -73,31 +25,33 @@ const Index = () => {
       <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="space-y-8">
-          <Tabs defaultValue="items" className="space-y-6">
+          <BulkActions onBooksUploaded={handleBooksUploaded} />
+          
+          <Tabs defaultValue="inward" className="space-y-6">
             <TabsList className="w-full border-b">
-              <TabsTrigger value="items" className="flex-1">Manage Items</TabsTrigger>
-              <TabsTrigger value="stock" className="flex-1">Stock Movement</TabsTrigger>
+              <TabsTrigger value="inward" className="flex-1">Stock Inward</TabsTrigger>
+              <TabsTrigger value="outward" className="flex-1">Stock Outward</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="items" className="space-y-6">
-              <ItemForm
-                item={newItem}
-                setItem={setNewItem}
-                onAddItem={addItem}
-                classes={classes}
-                programs={programs}
-                subjects={subjects}
-              />
-              <ItemList items={items} onDeleteItem={deleteItem} />
-            </TabsContent>
-            
-            <TabsContent value="stock" className="space-y-6">
+            <TabsContent value="inward" className="space-y-6">
               <StockManagement
                 items={items}
                 setItems={setItems}
                 classes={classes}
                 programs={programs}
                 subjects={subjects}
+                defaultType="inward"
+              />
+            </TabsContent>
+            
+            <TabsContent value="outward" className="space-y-6">
+              <StockManagement
+                items={items}
+                setItems={setItems}
+                classes={classes}
+                programs={programs}
+                subjects={subjects}
+                defaultType="outward"
               />
             </TabsContent>
           </Tabs>
