@@ -12,7 +12,18 @@ const Index = () => {
     return savedItems ? JSON.parse(savedItems) : [];
   });
 
-  const classes = Array.from({ length: 10 }, (_, i) => `${i + 1}st Grade`);
+  const classes = [
+    "1st class",
+    "2nd class",
+    "3rd class",
+    "4th class",
+    "5th class",
+    "6th class",
+    "7th class",
+    "8th class",
+    "9th class",
+    "10th class"
+  ];
   const programs = ["Aspirants", "Scholars", "Champions", "Jr Olympiads"];
   const subjects = ["Maths", "Physics", "Chemistry", "Biology", "Science", "English", "Reasoning", "GK"];
 
