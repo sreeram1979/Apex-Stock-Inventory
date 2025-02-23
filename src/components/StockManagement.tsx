@@ -49,11 +49,6 @@ export const StockManagement = ({
     autoCharges: 0,
   });
 
-  // Save books to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem('stockBooks', JSON.stringify(books));
-  }, [books]);
-
   useEffect(() => {
     setNewBook(prev => ({
       ...prev,
@@ -91,7 +86,6 @@ export const StockManagement = ({
     if (book.type === 'inward') {
       const updatedItems = updateItemStock(items, [book]);
       setItems(updatedItems);
-      localStorage.setItem('stockItems', JSON.stringify(updatedItems));
     }
 
     setNewBook({
@@ -119,9 +113,7 @@ export const StockManagement = ({
   };
 
   const deleteBook = (id: string) => {
-    const updatedBooks = books.filter((book) => book.id !== id);
-    setBooks(updatedBooks);
-    localStorage.setItem('stockBooks', JSON.stringify(updatedBooks));
+    setBooks(books.filter((book) => book.id !== id));
     toast({
       title: "Success",
       description: "Stock record deleted successfully",
