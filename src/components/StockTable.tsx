@@ -1,9 +1,11 @@
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Download, Trash2 } from "lucide-react";
+import { Download, FileSpreadsheet, Trash2 } from "lucide-react";
 import { Book } from "@/types/book";
 import { useState } from "react";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { Button } from "@/components/ui/button";
 
 interface StockTableProps {
   books: Book[];
@@ -21,7 +23,7 @@ export const StockTable = ({ books, onDeleteBook }: StockTableProps) => {
     return books.slice(startIndex, endIndex);
   };
 
-  const exportToCSV = () => {
+  const exportToExcel = () => {
     // Define headers
     const headers = [
       'Title',
@@ -63,7 +65,7 @@ export const StockTable = ({ books, onDeleteBook }: StockTableProps) => {
     ].join('\n');
 
     // Create and trigger download
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
@@ -77,12 +79,12 @@ export const StockTable = ({ books, onDeleteBook }: StockTableProps) => {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Current Stock ({books.length} items)</CardTitle>
-        <button
-          onClick={exportToCSV}
-          className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+        <Button
+          onClick={exportToExcel}
+          className="flex items-center gap-2 bg-green-600 hover:bg-green-700"
         >
-          <Download className="h-4 w-4" /> Export to CSV
-        </button>
+          <FileSpreadsheet className="h-4 w-4" /> Export to Excel
+        </Button>
       </CardHeader>
       <CardContent>
         <Table>
